@@ -1,13 +1,514 @@
-<!doctype html><html lang="is"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>STÆR2AF05 – Vika 3 · Æfingavinna</title><style>
-:root{font-family:Arial,Helvetica,sans-serif;color:#173749;background:#f5f8f9}*{box-sizing:border-box}body{margin:0}.wrap{max-width:960px;margin:32px auto 70px;padding:0 16px}h1{font-size:27px;color:#123f4e;margin:0 0 8px}h2{font-size:24px;color:#104d5c;margin:0 0 20px}p{line-height:1.65}.muted{color:#4a697a;font-size:13px}.notice{background:#e9f2f1;border:2px solid #1c5360;border-radius:12px;padding:20px 22px;margin:20px 0}.card{background:#fff;border:1px solid #c4dce3;border-radius:13px;padding:24px;margin-top:18px}.row{display:grid;grid-template-columns:1fr;gap:12px;align-items:stretch;border-top:1px solid #c4dce3;padding:22px 0}.day{font-size:15px;font-weight:700}.ex{margin-top:7px;font-size:13px;color:#4c7289;line-height:1.65}.extra{color:#536f7c}.track{display:flex;align-items:center;gap:20px;width:100%;padding:2px 0}.track output{min-width:74px;text-align:right;font-weight:700;font-size:16px;white-space:nowrap}input[type=range]{width:100%;height:29px;accent-color:#19596a;cursor:pointer;flex:1;min-width:0}.feedback{font-size:15px;font-weight:600;color:#355569;margin-top:12px;min-height:48px;line-height:1.45;background:#edf3f6;border:1px solid #c9dce3;border-left:5px solid #7896a5;border-radius:9px;padding:12px 15px;display:flex;align-items:center}.feedback.done{color:#125c47;background:#e4f5ec;border-color:#a5d9ba;border-left-color:#228052}.feedback.extraDone{color:#154b71;background:#e6f1fc;border-color:#b0d1ed;border-left-color:#307cb7}.status{background:#edf4f5;padding:14px;border-radius:9px;font-weight:700;margin:10px 0 8px}.bar{height:9px;background:#dce9eb;border-radius:99px;overflow:hidden;margin:11px 0}.bar>div{height:100%;background:#207082;transition:width .15s}.worklog{background:#eaf3f5}.controls{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.btn{border:1px solid #1b5966;background:#fff;border-radius:7px;color:#184c59;cursor:pointer;padding:9px 14px;font-weight:700}.btn.primary{background:#174f5e;color:#fff}.meta{font-size:12px;color:#678}.challenge{font-weight:700;color:#7b4b0f}@media(max-width:660px){.wrap{margin-top:17px}.card{padding:16px}.feedback{min-height:0;font-size:14px}h1{font-size:23px}}@media print{body{background:white}.controls,.intro{display:none!important}.wrap{margin:0 auto}.card,.row{break-inside:avoid}}
-</style></head><body><div class="wrap"><header><h1>STÆR2AF05 – Vika 3</h1><p class="muted">3.–6. nóvember 2026 · Gagnvirk vinnubók · Vinnuskil og framvinda</p></header><div class="notice" role="status"><strong>Vinnuútgáfa – ekki tilbúin til nemendanotkunar</strong><p>Hér er æfingaskráning viku 3. Skilningsverkefni og skiladæmi hafa ekki verið sett inn.</p></div><div class="notice intro"><strong>Reyndu öll kjarnadæmin til að fá fullt æfingastig.</strong><p style="margin:6px 0 0">„Æfðu meira“ er valfrjálst og gefur ekki aukastig.</p></div><section class="card"><h2>Æfingavinna vikunnar</h2><p>Skráðu fjölda dæma sem þú hefur <strong>raunverulega reynt</strong>, óháð því hvort svarið var rétt. Reyndu kjarnadæmin fyrst. Feitletruð dæmi eru meiri áskorun.</p><div id="rows"></div><div class="status" aria-live="polite" id="summary"></div><div class="bar"><div id="barfill" style="width:0%"></div></div><div class="controls"><button class="btn" type="button" id="reset">Núllstilla skráningu</button><button class="btn primary" type="button" id="print">Vista vinnuskrá sem PDF</button></div><p class="meta">Sleðinn skráir fjölda tilrauna, ekki hvaða einstöku dæmi voru reiknuð. Geymdu útreikningana til lokaskila. Skráning vistast sjálfkrafa í þessum vafra. <span id="storage" role="status"></span></p></section><section class="card worklog"><h2>Mín vinnuskrá</h2><p>Vinnuskráin sýnir sjálfskráðan fjölda reyndra dæma fyrir hvern dag.</p><div id="record" aria-live="polite"></div></section></div><script>
-const days=[{"label": "Þriðjudagur 3. nóvember", "topic": "Veldareglur – kafli 5.1", "core": ["5.1:3", "5.1:7", "5.1:10", "5.1:20", "5.1:16"], "more": ["5.1:5", "5.1:6", "5.1:12", "5.1:22", "5.1:24"], "coreCount": 5, "moreCount": 5, "challenge": ["5.1:16", "5.1:22", "5.1:24"]}, {"label": "Miðvikudagur 4. nóvember", "topic": "Rætur og brotnir veldisvísar – kaflar 5.2 og 5.3", "core": ["5.2:3", "5.2:6", "W1-V3-MI-K1", "5.2:12"], "more": ["5.2:1", "5.2:4", "5.3:10", "W1-V3-MI-E1"], "coreCount": 4, "moreCount": 4, "challenge": ["5.2:12"]}, {"label": "Fimmtudagur 5. nóvember", "topic": "Þríliðuþáttun og annars stigs jöfnur – kaflar 3.3 og 7.1", "core": ["3.3:2", "3.3:4", "7.1:5", "7.1:8", "7.1:18"], "more": ["3.3:1", "3.3:3", "7.1:1", "7.1:4", "7.1:10"], "coreCount": 5, "moreCount": 5, "challenge": ["7.1:18"]}, {"label": "Föstudagur 6. nóvember", "topic": "Lausnarformúla annars stigs jöfnu – kafli 7.1", "core": ["7.1:19", "7.1:13", "7.1:25", "7.1:15"], "more": ["7.1:20", "7.1:17", "7.1:24", "7.1:28"], "coreCount": 4, "moreCount": 4, "challenge": ["7.1:13", "7.1:20", "7.1:24"]}];const STORAGE_KEY='staer2af05.vika3.practice.v1';let storageOK=true;const counts=days.map(()=>0);
-try{const raw=localStorage.getItem(STORAGE_KEY);if(raw!==null){const saved=JSON.parse(raw);if(saved.version!==1||!Array.isArray(saved.counts)||saved.counts.length!==days.length||saved.counts.some((n,i)=>!Number.isInteger(n)||n<0||n>days[i].coreCount+days[i].moreCount))throw Error('Ógild skráning');saved.counts.forEach((n,i)=>counts[i]=n);}}catch{storageOK=false;}
-function save(){if(storageOK)try{localStorage.setItem(STORAGE_KEY,JSON.stringify({version:1,counts:counts.slice()}));}catch{storageOK=false;}document.getElementById('storage').textContent=storageOK?'':'Vistun er óvirk; eldri gögn eru ekki yfirskrifuð. Vistaðu vinnuskrána sem PDF áður en þú lokar.';}
-const rows=document.getElementById('rows');
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function fmtList(items,challenge){return items.map(x=>challenge.includes(x)?'<strong class="challenge">'+esc(x)+' · Áskorun</strong>':esc(x)).join(', ')}
-days.forEach((d,i)=>{const max=d.coreCount+d.moreCount;const row=document.createElement('div');row.className='row';row.innerHTML=`<div><div class="day">${esc(d.label)} · ${esc(d.topic)}</div><div class="ex"><b>Kjarni (${d.coreCount}):</b> ${fmtList(d.core,d.challenge)}<br><span class="extra"><b>Æfðu meira (${d.moreCount}):</b> ${fmtList(d.more,d.challenge)}</span></div></div><div><div class="track"><input type="range" id="range${i}" aria-label="Fjöldi reyndra dæma ${esc(d.label)}" min="0" max="${max}" step="1" value="0"><output id="out${i}" for="range${i}">0 af ${max}</output></div><div class="feedback" id="feedback${i}" aria-live="polite">Engin dæmi skráð enn.</div></div>`;rows.appendChild(row);row.querySelector('input').addEventListener('input',e=>{counts[i]=Number(e.target.value);save();render()})});
-function render(){let coreDone=0,total=0;days.forEach((d,i)=>{const n=counts[i],max=d.coreCount+d.moreCount;document.getElementById('range'+i).value=n;coreDone+=Math.min(n,d.coreCount);total+=n;document.getElementById('out'+i).textContent=`${n} af ${max}`;const f=document.getElementById('feedback'+i);f.className='feedback';if(n===0)f.textContent='Engin dæmi skráð enn.';else if(n<d.coreCount)f.textContent=`Þú átt enn eftir að æfa ${d.coreCount-n} kjarnadæmi til að ná fullum stigum dagsins.`;else if(n===d.coreCount){f.textContent='Kjarnavinnu lokið – þú hefur náð fullum stigum dagsins.';f.classList.add('done')}else{f.textContent=`Þú hefur líka æft meira – ${n-d.coreCount} aukadæmi skráð. Haltu áfram ef þú vilt styrkja færnina.`;f.classList.add('extraDone')}});const N=18;const score=25*coreDone/N;document.getElementById('summary').textContent=`Reynd dæmi: ${total} af 36 · Kjarni: ${coreDone} af ${N} · Áætluð æfingastig: ${score.toFixed(2).replace('.',',')} af 25`;document.getElementById('barfill').style.width=(100*coreDone/N)+'%';document.getElementById('record').textContent=days.map((d,i)=>`${d.label}: ${counts[i]}/${d.coreCount+d.moreCount}`).join(' · ') + ` · Áætluð æfingastig: ${score.toFixed(2).replace('.',',')} / 25`;}
-document.getElementById('reset').onclick=()=>{counts.fill(0);document.querySelectorAll('input[type=range]').forEach(x=>x.value=0);save();render()};document.getElementById('print').onclick=()=>window.print();render();document.getElementById('storage').textContent=storageOK?'':'Vistun er óvirk; eldri gögn eru ekki yfirskrifuð. Vistaðu vinnuskrána sem PDF áður en þú lokar.';
-</script></body></html>
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vefbók – vika 3 · STÆR2AF05</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f7fafb;color:#22374b;font:17px/1.65 Arial,Helvetica,sans-serif}
+main{max-width:1000px;margin:auto;padding:32px 22px 60px}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.15;color:#194c55;margin:10px 0 18px}
+h2{font-size:24px;line-height:1.3;color:#194c55;margin:0 0 6px}
+p{margin:10px 0}
+.eyebrow{color:#526c70;font-size:14px;letter-spacing:.06em;margin:0}
+.intro,.card,.submit,.progress,.finish{padding:24px;border:1px solid #c9dde1;border-radius:12px;background:#fff;margin:18px 0}
+.intro{background:#edf3fa;border-color:#c5d5e8}
+.progress{background:#f0f6f6}
+.submit{background:#f3f0f8;border-color:#d7cde5}
+.finish{border:2px solid #194c55;background:#eaf4f2}
+.day{display:inline-block;font-size:14px;font-weight:bold;color:#086376;letter-spacing:.03em}
+.tag{display:inline-block;color:#5b3d8a;font-size:14px;font-weight:bold}
+.part{border-top:1px solid #dbe8eb;margin-top:16px;padding-top:4px}
+.part-label{font-size:14px;font-weight:bold;color:#526c70;letter-spacing:.04em;text-transform:uppercase;margin:12px 0 2px}
+.math{font-size:21px;line-height:2.2;margin:10px 0}
+.frac{white-space:nowrap;display:inline-flex;vertical-align:middle;flex-direction:column;text-align:center;line-height:1.3;margin:0 4px}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 5px 2px}
+.frac>span:last-child{padding:2px 5px 0}
+.steps{margin:10px 0;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;padding:6px 10px;border-left:3px solid #c9dde1;margin:6px 0;background:#f8fbfb}
+.steps li::before{content:"Skref " counter(s) ": ";font-weight:bold;color:#526c70;font-size:15px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.compare>div{border:1px solid #c9dde1;border-radius:9px;padding:10px 14px;background:#f8fbfb}
+.compare b{color:#194c55}
+.choices{border:0;padding:0;margin:14px 0}
+.choices legend{font-weight:bold;font-size:17px;margin-bottom:8px;padding:0}
+.option{display:flex;align-items:center;gap:12px;border:1px solid #c9dde1;border-radius:7px;padding:10px 12px;margin:7px 0;font-weight:normal;cursor:pointer;background:#fff;min-height:46px}
+.option:has(input:checked){background:#edf3fa;border-color:#194c55}
+.option input{flex:0 0 auto;width:20px;height:20px;margin:0}
+.option span{min-width:0;overflow-wrap:anywhere}
+.row-opts .opts{display:flex;flex-wrap:nowrap;gap:8px}
+.row-opts .option{flex:1 1 0;min-width:0;gap:8px;padding:10px 8px;margin:0}
+.row-opts .option span{overflow-wrap:normal;word-break:keep-all}
+@media(max-width:480px){.row-opts .option{flex-direction:column;justify-content:center;gap:4px;padding:8px 4px;text-align:center;font-size:16px}}
+.match-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #e1ecee}
+.match-row .lhs{flex:0 0 190px;font-size:20px}
+.match-row select{flex:1 1 220px;min-width:0;max-width:100%;min-height:46px;font:inherit;font-size:17px;padding:6px 10px;border:1px solid #8a9fa7;border-radius:7px;background:#fff;color:inherit}
+.fill{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:12px 0}
+.fill input{width:120px;min-height:46px;font:inherit;font-size:20px;padding:6px 10px;border:1px solid #8a9fa7;border-radius:7px;text-align:center}
+.blank{display:inline-block;min-width:1.6em;border:2px dashed #8a9fa7;border-radius:5px;line-height:1.1;text-align:center;font-size:.8em;padding:0 3px;color:#52656d}
+button{display:inline-block;font:inherit;font-size:16px;border:1px solid #194c55;border-radius:7px;padding:10px 16px;background:#194c55;color:#fff;cursor:pointer;min-height:44px}
+button.secondary{color:#194c55;background:#fff}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+nav.toc a{display:inline-flex;align-items:center;gap:6px;font-size:15px;border:1px solid #194c55;border-radius:7px;padding:8px 12px;color:#194c55;background:#fff;text-decoration:none;min-height:44px}
+:focus-visible{outline:3px solid #a84a12;outline-offset:3px}
+.feedback{margin:10px 0}
+.feedback:not(:empty){padding:12px 15px;border:1px solid #bed0d4;border-radius:7px;background:#f1f5f7}
+.feedback.correct:not(:empty){background:#e7f6eb;border-color:#70b586;color:#155a31}
+.feedback.incorrect:not(:empty){background:#fdebec;border-color:#dc9196;color:#92242d}
+.feedback.notice:not(:empty){background:#fff4e5;border-color:#ddba75;color:#6a470f}
+.feedback .verdict{font-weight:bold;display:block;margin-bottom:2px}
+.feedback p{margin:6px 0}
+.hint,.solution{padding:12px 15px;border-radius:7px;margin:10px 0}
+.hint{background:#fff5e8;border:1px solid #e6d0af}
+.solution{background:#f0f6f6;border:1px solid #c9dde1}
+.status{font-size:14px;color:#52656d;margin:6px 0}
+.muted{font-size:14px;color:#52656d}
+.bar{height:8px;background:#dce8ea;border-radius:8px;margin:12px 0}
+.bar span{display:block;height:100%;background:#194c55;border-radius:8px;width:0;transition:width .2s}
+.overview{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0}
+.overview th,.overview td{border-bottom:1px solid #d3e2e5;padding:7px 6px;text-align:left;vertical-align:top}
+.overview thead th{font-size:14px;color:#405a63}
+.save{font-size:14px;padding:8px 12px;border-radius:7px;background:#fff;border:1px solid #c9dde1;display:inline-block}
+.save.bad{background:#fdebec;border-color:#dc9196;color:#92242d}
+.practice-day{border-top:1px solid #c9dde1;padding:14px 0}
+.practice-day .head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;align-items:baseline}
+.practice-day .head strong{font-size:17px}
+.practice-row{display:flex;align-items:center;gap:12px;margin:6px 0}
+.practice-row input{flex:1;min-width:0;height:44px;accent-color:#194c55;cursor:pointer}
+.practice-count{min-width:84px;text-align:right;font-weight:bold}
+.practice-note{margin:4px 0 0;padding:8px 12px;border-radius:7px;background:#f0f6f6;border-left:4px solid #8fb3b8;font-size:15px;min-height:2.6em}
+.practice-note.done{background:#e7f6eb;border-left-color:#4f9a66}
+.practice-note.extra{background:#eaf2fb;border-left-color:#4f88b3}
+.practice-result{padding:12px;background:#f0f6f6;border-radius:7px;font-weight:bold}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hidden,[hidden]{display:none!important}
+footer{border-top:1px solid #c9dde1;margin-top:30px;padding-top:15px}
+#print-report{display:none}
+@media(max-width:600px){.compare{grid-template-columns:1fr}.match-row .lhs{flex-basis:100%}}
+@media(max-width:560px){main{padding:18px 12px 50px}.intro,.card,.submit,.progress,.finish{padding:16px}.math{font-size:19px}.overview{font-size:14px}}
+@media print{body{background:#fff;font-size:11pt}main>*:not(#print-report){display:none!important}#print-report{display:block!important}#print-report article{break-inside:avoid;border-bottom:1px solid #aaa;padding:6px 0}#print-report p{margin:3px 0}}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <p class="eyebrow">STÆR2AF05 · VIKA 3 · 2.–6. NÓVEMBER 2026</p>
+ <h1>Veldi, rætur og annars stigs jöfnur</h1>
+ <p>Kannaðu skilninginn. Hér þarftu ekki að reikna heil dæmi: verkefnin snúast um reglur, rök og algengan misskilning.</p>
+</header>
+
+<section class="intro" aria-labelledby="intro-title">
+ <h2 id="intro-title">Hvernig vinn ég vefbókina?</h2>
+ <p>Vinndu vefbókina eftir bókarvinnu vikunnar. Hún tekur um 15–20 mínútur.</p>
+ <p>Veldu fyrst eigið svar og skráðu það. Lestu endurgjöfina og reyndu aftur ef þarf. Vísbending er alltaf í boði. Lausnina geturðu borið saman við eftir að þú hefur skráð tilraun.</p>
+ <nav class="toc" aria-label="Efnisyfirlit" id="toc"></nav>
+ <p class="save" id="save-status" role="status" aria-live="polite">Athuga vistun…</p>
+</section>
+
+<div id="tasks"></div>
+
+<div id="skil-gate" class="submit" role="status">Skiladæmi vikunnar opnast þegar þú hefur skráð tilraun í öllum liðum allra verkefna.</div>
+<section class="submit" id="skil" hidden aria-labelledby="skil-title">
+ <span class="tag">SKILADÆMI VIKUNNAR</span>
+ <h2 id="skil-title">Sýndu reikniskrefin</h2>
+ <p>Leystu jöfnuna með þáttun. Sannprófaðu síðan báðar lausnirnar með því að setja þær inn í upprunalegu jöfnuna.</p>
+ <p class="math">3x<sup>2</sup> − 5x − 2 = 0</p>
+ <p>Sýndu alla útreikninga á blaði og vandaðu framsetningu. Skilaðu lausninni í Canvas með vikuskilunum.</p>
+</section>
+
+<section class="card" id="practice-tracker" aria-labelledby="practice-title">
+ <h2 id="practice-title">Æfingavinna vikunnar</h2>
+ <p>Renndu sleðanum að fjölda dæma sem þú hefur reynt hvern dag, óháð því hvort svarið var rétt. Dæmaval hvers dags er á vikusíðunni í Canvas.</p>
+ <p class="muted">Sjö Kjarnadæmi á dag gilda til æfingastiga, alls 28 í vikunni. Dæmi umfram það eru valfrjáls viðbótarþjálfun (Æfðu meira).</p>
+ <div id="practice-days"></div>
+ <p id="legacy-note" class="feedback notice" hidden></p>
+ <p id="practice-result" class="practice-result" role="status" aria-live="polite"></p>
+ <p class="muted">Sjálfskráning og bráðabirgðastig. Fjöldinn verður sannreyndur þegar þú skilar útreikningum í lok spannar.</p>
+</section>
+
+<section class="finish" aria-labelledby="finish-title">
+ <h2 id="finish-title">Áður en þú lýkur vikuvinnunni</h2>
+ <p>Vistaðu vinnuskrána sem PDF og skilaðu henni ásamt lausn á skiladæminu í Canvas.</p>
+ <p>Geymdu útreikninga æfingadæmanna. Þeim verður skilað saman í lok spannar.</p>
+</section>
+
+<section class="progress" aria-labelledby="progress-title">
+ <h2 id="progress-title">Mín vinnuskrá</h2>
+ <p id="count" role="status" aria-live="polite"></p>
+ <div class="bar" aria-hidden="true"><span id="bar"></span></div>
+ <table class="overview">
+  <caption class="sr-only">Staða verkefna</caption>
+  <thead><tr><th scope="col">Verkefni</th><th scope="col">Liðir með tilraun</th><th scope="col">Rétt í fyrstu tilraun án hjálpar</th></tr></thead>
+  <tbody id="overview-body"></tbody>
+ </table>
+ <p class="muted">Vinnuskráin sýnir skráðar tilraunir og hjálparnotkun. Hún er ekki einkunn og sannar ekki ein og sér að þú hafir náð tökum á efninu.</p>
+ <div class="actions">
+  <button id="print" class="secondary" type="button">Prenta vinnuskrá / vista sem PDF</button>
+  <button id="export" class="secondary" type="button">Sækja afrit af gögnum (JSON)</button>
+ </div>
+</section>
+
+<section id="print-report" aria-label="Vinnuskrá til prentunar"></section>
+<noscript><p>Virkja þarf JavaScript til að skrá vinnu og opna skiladæmið.</p></noscript>
+<footer><p class="muted">Gögn eru geymd í þessum vafra ef vistun er tiltæk. Engin nöfn eða einkunnir eru skráð. Ef þú skiptir um tæki eða hreinsar vafrann fylgja gögnin ekki með; vistaðu PDF-vinnuskrá til öryggis. Útgáfa <span id="rev"></span>.</p></footer>
+</main>
+
+<script>
+'use strict';
+const F=(a,b)=>`<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const BL='<span class="blank" aria-label="eyða">?</span>';
+const ASN=['Alltaf','Stundum','Aldrei'];
+const RR=['Rétt','Rangt'];
+/* ===================== Efni ===================== */
+const RULES=['Margföldun samstofna velda: aⁿ · aᵐ = aⁿ⁺ᵐ','Deiling samstofna velda: aⁿ / aᵐ = aⁿ⁻ᵐ','Veldi af veldi: (aⁿ)ᵐ = aⁿ·ᵐ','Veldi af margfeldi: (ab)ⁿ = aⁿbⁿ','Neikvæður veldisvísir: a⁻ⁿ = 1/aⁿ','Núllveldi: a⁰ = 1'];
+const TASKS=[
+{id:'V1',day:'Þriðjudagur · Kafli 5.1 – Heil veldi',title:'Hvaða veldaregla á við?',parts:[
+ {id:'A',kind:'match',label:'Veldu regluna',
+  intro:'Hvert skref hér fyrir neðan er rétt. Veldu regluna sem er notuð í hverju skrefi (x ≠ 0).',
+  pool:RULES,
+  rows:[
+   {lhs:'x<sup>3</sup> · x<sup>4</sup> = x<sup>7</sup>',correct:0,fb:{2:'Við veldi af veldi margfaldast vísarnir. Hér eru tvö veldi margfölduð saman og vísarnir leggjast saman: 3 + 4 = 7.'}},
+   {lhs:'(x<sup>3</sup>)<sup>4</sup> = x<sup>12</sup>',correct:2,fb:{0:'Ef þetta væri margföldun samstofna velda fengist x<sup>3+4</sup> = x<sup>7</sup>. Hér er veldi hafið í veldi: 3 · 4 = 12.'}},
+   {lhs:'(2x)<sup>3</sup> = 8x<sup>3</sup>',correct:3,fb:{2:'Í sviganum er margfeldi 2 · x. Veldið verkar á hvorn þátt: 2<sup>3</sup> · x<sup>3</sup>.'}},
+   {lhs:F('x<sup>2</sup>','x<sup>5</sup>')+' = x<sup>−3</sup>',correct:1,fb:{4:'Það kemur neikvæður vísir út, en reglan sem er notuð er deiling: 2 − 5 = −3.'}},
+   {lhs:'x<sup>−3</sup> = '+F('1','x<sup>3</sup>'),correct:4,fb:{1:'Hér er engin deiling tveggja velda. Skrefið umritar neikvæðan veldisvísi sem brot.'}}],
+  generic:'Ekki rétt. Skoðaðu hvaða aðgerð er gerð í skrefinu: margföldun, deiling, veldi af sviga eða umritun?',
+  hint:'Spurðu: Eru tvö veldi margfölduð eða deilt? Er heilt veldi í sviga hafið í veldi? Er svigi utan um margfeldi?',
+  solution:'x<sup>3</sup>x<sup>4</sup>: margföldun samstofna velda. (x<sup>3</sup>)<sup>4</sup>: veldi af veldi. (2x)<sup>3</sup>: veldi af margfeldi. x<sup>2</sup>/x<sup>5</sup>: deiling samstofna velda. x<sup>−3</sup> = 1/x<sup>3</sup>: neikvæður veldisvísir.'},
+ {id:'B',kind:'asn',label:'Alltaf, stundum eða aldrei satt?',
+  intro:'Er fullyrðingin alltaf sönn, stundum sönn eða aldrei sönn? Breyturnar eru rauntölur og x ≠ 0.',
+  groups:[
+   {legend:'(a + b)<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>',correct:1,
+    fb:['Prófaðu a = 1 og b = 1: (1 + 1)<sup>2</sup> = 4, en 1<sup>2</sup> + 1<sup>2</sup> = 2. Eitt mótdæmi sýnir að þetta er ekki alltaf satt.',
+        'Rétt. (a + b)<sup>2</sup> = a<sup>2</sup> + 2ab + b<sup>2</sup>, svo jafnan gildir aðeins þegar ab = 0. Veldareglur gilda um margfeldi, ekki summu.',
+        'Prófaðu a = 0 og b = 3: þá eru báðar hliðar 9. Hún er því stundum sönn.']},
+   {legend:'x<sup>−2</sup> er neikvæð tala',correct:2,
+    fb:['Prófaðu x = 2: x<sup>−2</sup> = 1/4, sem er jákvætt.',
+        'Prófaðu líka neikvætt x: (−2)<sup>−2</sup> = 1/(−2)<sup>2</sup> = 1/4. Getur útkoman einhvern tíma orðið neikvæð?',
+        'Rétt. x<sup>−2</sup> = 1/x<sup>2</sup> og x<sup>2</sup> &gt; 0. Neikvæður veldisvísir merkir umhverfu, ekki neikvæða tölu.']}],
+  hint:'Prófaðu tölur. Eitt mótdæmi sýnir að fullyrðing er ekki alltaf sönn; eitt dæmi sem gengur upp sýnir að hún er ekki aldrei sönn.',
+  solution:'(a + b)<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>: stundum (aðeins ef ab = 0). x<sup>−2</sup> &lt; 0: aldrei, því x<sup>−2</sup> = 1/x<sup>2</sup> &gt; 0.'}
+]},
+{id:'V2',day:'Þriðjudagur · Kafli 5.1 – Heil veldi',title:'Hvar fór lausnin úrskeiðis?',parts:[
+ {id:'A',kind:'choice',label:'Villugreining',
+  intro:`Nemandi einfaldaði <span class="math">(−3a<sup>2</sup>b)<sup>2</sup> · a<sup>−3</sup></span> svona:<ol class="steps"><li>(−3a<sup>2</sup>b)<sup>2</sup> · a<sup>−3</sup> = −9a<sup>4</sup>b<sup>2</sup> · a<sup>−3</sup></li><li>−9a<sup>4</sup>b<sup>2</sup> · a<sup>−3</sup> = −9a<sup>1</sup>b<sup>2</sup></li><li>−9a<sup>1</sup>b<sup>2</sup> = −9ab<sup>2</sup></li></ol>`,
+  groups:[{legend:'Hvar er fyrsta villan?',options:['Í skrefi 1','Í skrefi 2','Í skrefi 3','Engin villa'],correct:0,
+   fb:['Rétt. Veldið 2 verkar á alla þættina: (−3)<sup>2</sup> = 9, (a<sup>2</sup>)<sup>2</sup> = a<sup>4</sup> og b<sup>2</sup>. Neikvæð tala í öðru veldi verður jákvæð.',
+       'Skref 2 er í lagi: a<sup>4</sup> · a<sup>−3</sup> = a<sup>4+(−3)</sup> = a<sup>1</sup>. Skoðaðu formerkið í skrefi 1.',
+       'Skref 3 er í lagi: a<sup>1</sup> = a. Hvað verður um −3 í skrefi 1?',
+       'Hvað er (−3)<sup>2</sup>? Margfaldaðu (−3) · (−3).']}],
+  hint:'Skrifaðu (−3a<sup>2</sup>b)<sup>2</sup> = (−3a<sup>2</sup>b) · (−3a<sup>2</sup>b). Hvert verður formerkið?',
+  solution:'Fyrsta villan er í skrefi 1. Rétt: (−3a<sup>2</sup>b)<sup>2</sup> · a<sup>−3</sup> = 9a<sup>4</sup>b<sup>2</sup> · a<sup>−3</sup> = <strong>9ab<sup>2</sup></strong>.'}
+]},
+{id:'V3',day:'Miðvikudagur · Kaflar 5.2 og 5.3 – Rætur og brotin veldi',title:'Rætur og brotnir veldisvísar',parts:[
+ {id:'A',kind:'match',label:'Paraðu saman jafngildar stærðir',
+  intro:'Veldu veldið sem er jafnt hverri stærð (x &gt; 0). Mundu: <sup>n</sup>√x = x<sup>1/n</sup>.',
+  pool:['x^(1/2)','x^(2/3)','x^(3/2)','x^(−1/2)','x^(5/6)','x^(1/6)','x^(−2)'],
+  rows:[
+   {lhs:'√x',correct:0,fb:{2:'x<sup>3/2</sup> = √(x<sup>3</sup>). Ferningsrót ein og sér er x<sup>1/2</sup>.',3:'Mínus í veldisvísi merkir umhverfu. √x er ekki brot.',6:'x<sup>−2</sup> = 1/x<sup>2</sup>, sem tengist ekki rót.'}},
+   {lhs:'∛(x<sup>2</sup>)',correct:1,fb:{2:'Nefnarinn segir hvaða rót er tekin. ∛ gefur nefnarann 3; veldið 2 undir rótinni fer í teljarann.',4:'x<sup>5/6</sup> = √x · ∛x. Hér er ein rót.'}},
+   {lhs:F('1','√x'),correct:3,fb:{0:'Rótin er í nefnara. 1/x<sup>a</sup> = x<sup>−a</sup>.',6:'x<sup>−2</sup> = 1/x<sup>2</sup>. Hér er √x í nefnara, ekki x<sup>2</sup>.'}},
+   {lhs:'√x · ∛x',correct:4,fb:{5:'Við margföldun leggjast veldisvísar saman: 1/2 + 1/3, ekki 1/2 − 1/3.',1:'1/2 + 1/3 = 3/6 + 2/6. Hvað verður það?'}}],
+  generic:'Ekki rétt. Skrifaðu rótina sem veldi: <sup>n</sup>√x = x<sup>1/n</sup>, og athugaðu hvar rótin stendur.',
+  hint:'Skrifaðu hverja rót sem veldi og notaðu reglurnar: x<sup>a</sup> · x<sup>b</sup> = x<sup>a+b</sup> og 1/x<sup>a</sup> = x<sup>−a</sup>.',
+  solution:'√x = x<sup>1/2</sup> · ∛(x<sup>2</sup>) = x<sup>2/3</sup> · 1/√x = x<sup>−1/2</sup> · √x · ∛x = x<sup>1/2 + 1/3</sup> = x<sup>5/6</sup>.'},
+ {id:'B',kind:'choice',label:'Rétt eða rangt – og hvers vegna?',
+  intro:'Fullyrðing: <span class="math">√(x<sup>2</sup>) = x</span> fyrir allar rauntölur x.',
+  groups:[
+   {legend:'Er fullyrðingin rétt eða röng?',options:RR,correct:1,row:true,
+    fb:['Prófaðu neikvætt x, t.d. x = −3.','Rétt.']},
+   {legend:'Hvaða rök eiga við?',options:['Mótdæmi: x = −3 gefur √((−3)<sup>2</sup>) = √9 = 3, sem er ekki −3.','Rót og annað veldi eyða alltaf hvort öðru.','√(x<sup>2</sup>) er ekki skilgreint þegar x &lt; 0.','Fullyrðingin gildir aðeins fyrir heilar tölur.'],correct:0,
+    fb:['Rétt. Almennt gildir √(x<sup>2</sup>) = |x|, tölugildi x. Jafnan √(x<sup>2</sup>) = x gildir aðeins þegar x ≥ 0.',
+        'Þau eyða hvort öðru aðeins þegar x ≥ 0. Ferningsrót gefur aldrei neikvæða tölu.',
+        'x<sup>2</sup> ≥ 0 fyrir öll x, svo rótin er alltaf skilgreind. Vandinn er formerkið á útkomunni.',
+        'Prófaðu x = −3, sem er heil tala. Gildir jafnan þá?']}],
+  hint:'Ferningsrót gefur alltaf tölu sem er ≥ 0. Getur hægri hliðin x verið neikvæð?',
+  solution:'Fullyrðingin er röng. Mótdæmi: x = −3 gefur √9 = 3 ≠ −3. Rétt er √(x<sup>2</sup>) = |x|.'},
+ {id:'C',kind:'fill',label:'Fylltu inn í eyðuna',
+  intro:`Hvaða veldisvísir á að standa í eyðunni (x &gt; 0)?<p class="math">√x · x<sup>${BL}</sup> = x</p>`,
+  inputLabel:'Veldisvísir í eyðuna',placeholder:'t.d. 2/3',
+  accept:[1/2],
+  wrong:[{v:1,msg:'Þá fengist x<sup>1/2</sup> · x<sup>1</sup> = x<sup>3/2</sup>. Veldisvísarnir eiga að leggjast saman í 1.'},
+         {v:-1/2,msg:'Þá fengist x<sup>1/2 + (−1/2)</sup> = x<sup>0</sup> = 1, ekki x.'},
+         {v:2,msg:'Þá fengist x<sup>1/2 + 2</sup> = x<sup>5/2</sup>.'},
+         {v:0,msg:'Þá fengist x<sup>1/2</sup> · x<sup>0</sup> = √x, ekki x.'}],
+  generic:'Skrifaðu √x sem veldi. Hvaða tölu þarf að leggja við vísinn til að fá 1?',
+  hint:'√x = x<sup>1/2</sup>, og x = x<sup>1</sup>. Við margföldun leggjast veldisvísar saman.',
+  solution:'√x · x<sup>1/2</sup> = x<sup>1/2 + 1/2</sup> = x<sup>1</sup> = x. Eyðan er <strong>1/2</strong>.'}
+]},
+{id:'V4',day:'Fimmtudagur · Kafli 3.3 – Þáttun þríliðu',title:'Ágiskunarreglan',parts:[
+ {id:'A',kind:'choice',label:'Veldu rétt næsta skref',
+  intro:'Við viljum þátta x<sup>2</sup> + 2x − 15 á forminu (x + p)(x + q).',
+  groups:[{legend:'Hvaða tvær tölur p og q eigum við að leita að?',options:['pq = −15 og p + q = 2','pq = 2 og p + q = −15','pq = 15 og p + q = 2','pq = −15 og p + q = −2'],correct:0,
+   fb:['Rétt. Margfeldið pq er fastaliðurinn −15 og summan p + q er stuðull x, sem er 2.',
+       'Hlutverkunum er snúið við. Margfeldið á að gefa fastaliðinn og summan stuðul x.',
+       'Athugaðu formerkið á fastaliðnum: hann er −15.',
+       'Athugaðu formerkið á x-liðnum: hann er +2x.']}],
+  hint:'Margfaldaðu út (x + p)(x + q) = x<sup>2</sup> + (p + q)x + pq og berðu saman við x<sup>2</sup> + 2x − 15.',
+  solution:'(x + p)(x + q) = x<sup>2</sup> + (p + q)x + pq. Því þarf pq = −15 og p + q = 2.'},
+ {id:'B',kind:'fill',label:'Fylltu inn í eyðuna',
+  intro:`Hvaða tala á að standa í eyðunni?<p class="math">x<sup>2</sup> + 2x − 15 = (x + 5)(x − ${BL})</p>`,
+  inputLabel:'Tala í eyðuna',placeholder:'',
+  accept:[3],
+  wrong:[{v:-3,msg:'Þá yrði seinni þátturinn x − (−3) = x + 3, og margfeldið 5 · 3 = +15. Fastaliðurinn á að vera −15.'},
+         {v:5,msg:'(x + 5)(x − 5) = x<sup>2</sup> − 25. Þá hverfur x-liðurinn.'},
+         {v:15,msg:'Þá yrði margfeldið 5 · (−15) = −75, ekki −15.'},
+         {v:10,msg:'Þá yrði margfeldið 5 · (−10) = −50, ekki −15.'}],
+  generic:'Margfeldið 5 · (−?) á að vera −15 og summan 5 + (−?) á að vera 2.',
+  hint:'Hvaða tala gefur 5 · (−?) = −15?',
+  solution:'(x + 5)(x − 3) = x<sup>2</sup> − 3x + 5x − 15 = x<sup>2</sup> + 2x − 15. Eyðan er <strong>3</strong>.'}
+]},
+{id:'V5',day:'Fimmtudagur · Kafli 7.1 – Annars stigs jöfnur: tvíliður',title:'Tvær leiðir að sömu jöfnu',parts:[
+ {id:'A',kind:'choice',label:'Berðu saman tvær lausnaaðferðir',
+  intro:`Tveir nemendur leystu jöfnuna <span class="math">2x<sup>2</sup> = 8x</span>.<div class="compare"><div><b>Anna</b><br>Deilir báðum hliðum með 2x:<br>x = 4</div><div><b>Bjarki</b><br>2x<sup>2</sup> − 8x = 0<br>2x(x − 4) = 0<br>x = 0 eða x = 4</div></div>`,
+  groups:[
+   {legend:'Hvor lausnin er rétt og fullkomin?',options:['Lausn Bjarka','Lausn Önnu','Báðar','Hvorug'],correct:0,
+    fb:['Rétt. Settu x = 0 inn: 2 · 0 = 8 · 0. Bæði x = 0 og x = 4 uppfylla jöfnuna.',
+        'Settu x = 0 inn í upprunalegu jöfnuna. Er x = 0 lausn?',
+        'Báðar fá x = 4, en er það eina lausnin? Prófaðu x = 0.',
+        'Prófaðu x = 4 og x = 0 í upprunalegu jöfnunni.']},
+   {legend:'Hvers vegna vantar lausn hjá Önnu?',options:['Deiling með 2x er aðeins leyfileg ef x ≠ 0, svo lausnin x = 0 tapast.','Anna gleymdi ± þegar hún tók ferningsrót.','Anna átti að margfalda báðar hliðar með x.','Það vantar enga lausn hjá Önnu.'],correct:0,
+    fb:['Rétt. Ekki má deila með stærð sem getur verið 0. Betra er að færa allt á aðra hliðina og taka sameiginlegan þátt út fyrir sviga.',
+        'Anna tók enga ferningsrót. Hvað gerði hún í staðinn?',
+        'Það myndi gera jöfnuna flóknari og leysir ekki vandann.',
+        'x = 0 er lausn: 2 · 0<sup>2</sup> = 8 · 0. Hún kemur ekki fram hjá Önnu.']}],
+  hint:'Prófaðu að setja x = 0 inn í 2x<sup>2</sup> = 8x.',
+  solution:'Rétt leið: 2x<sup>2</sup> − 8x = 0 ⇒ 2x(x − 4) = 0 ⇒ x = 0 eða x = 4. Deiling með 2x felur í sér að x ≠ 0, svo lausnin x = 0 tapast.'},
+ {id:'B',kind:'asn',label:'Alltaf, stundum eða aldrei satt?',
+  intro:'c er rauntala.',
+  groups:[
+   {legend:'Jafnan x<sup>2</sup> = c hefur tvær rauntölulausnir.',correct:1,
+    fb:['Prófaðu c = −4: x<sup>2</sup> = −4 hefur enga rauntölulausn.',
+        'Rétt. c &gt; 0 gefur tvær lausnir, x = ±√c. c = 0 gefur eina lausn, x = 0. c &lt; 0 gefur enga.',
+        'Prófaðu c = 9: x = 3 og x = −3 eru báðar lausnir.']},
+   {legend:'Jafnan x<sup>2</sup> + c = 0, þar sem c &gt; 0, hefur rauntölulausn.',correct:2,
+    fb:['Prófaðu c = 1: x<sup>2</sup> = −1. Er til rauntala sem gefur −1 í öðru veldi?',
+        'Finnurðu eitthvert c &gt; 0 sem gefur lausn? x<sup>2</sup> = −c er neikvæð tala.',
+        'Rétt. x<sup>2</sup> = −c &lt; 0, en x<sup>2</sup> ≥ 0 fyrir allar rauntölur.']}],
+  hint:'Einangraðu x<sup>2</sup>. Getur x<sup>2</sup> verið neikvætt?',
+  solution:'x<sup>2</sup> = c: stundum (tvær lausnir ±√c þegar c &gt; 0). x<sup>2</sup> + c = 0 með c &gt; 0: aldrei, því x<sup>2</sup> getur ekki verið neikvætt.'}
+]},
+{id:'V6',day:'Föstudagur · Kafli 7.1 – Annars stigs jöfnur: þríliður',title:'Núllþáttareglan',parts:[
+ {id:'A',kind:'choice',label:'Villugreining',
+  intro:'Nemandi leysti jöfnuna x<sup>2</sup> − 5x = 6 svona:<ol class="steps"><li>x(x − 5) = 6</li><li>x = 6 eða x − 5 = 6</li><li>x = 6 eða x = 11</li></ol>',
+  groups:[{legend:'Hver er villan?',options:['Þáttunin í skrefi 1 er röng.','Í skrefi 2 er notað að margfeldi sé 0, en hægri hliðin er 6.','Það vantar ± í skrefi 3.','Engin villa.'],correct:1,
+   fb:['x(x − 5) = x<sup>2</sup> − 5x, svo þáttunin er rétt. Vandinn er í næsta skrefi.',
+       'Rétt. Ef ab = 0 þá er a = 0 eða b = 0. Reglan gildir aðeins þegar margfeldið er <em>núll</em>; margfeldið 6 má fá á óteljandi vegu. Fyrst þarf að færa allt yfir: x<sup>2</sup> − 5x − 6 = 0.',
+       'Hér er ekki notuð rótaraðferð, svo ± á ekki við.',
+       'Settu x = 11 í upprunalegu jöfnuna: 121 − 55 = 66, ekki 6.']}],
+  hint:'Prófaðu að setja x = 11 inn í upprunalegu jöfnuna.',
+  solution:'Núllþáttareglan á aðeins við margfeldið 0. Rétt: x<sup>2</sup> − 5x − 6 = 0 ⇒ (x − 6)(x + 1) = 0 ⇒ x = 6 eða x = −1.'},
+ {id:'B',kind:'choice',label:'Veldu rétt næsta skref',
+  intro:'Leysa á jöfnuna <span class="math">−x<sup>2</sup> − 2x + 3 = 0</span> með þáttun.',
+  groups:[
+   {legend:'Hvert er hentugt næsta skref?',options:['Margfalda báðar hliðar með −1: x<sup>2</sup> + 2x − 3 = 0','Deila báðum hliðum með x: −x − 2 + 3/x = 0','Taka x út fyrir sviga: x(−x − 2) = −3, svo x = −3 eða −x − 2 = −3','Margfalda aðeins x<sup>2</sup>-liðinn með −1: x<sup>2</sup> − 2x + 3 = 0'],correct:0,
+    fb:['Rétt. Margföldun beggja hliða með −1 breytir ekki lausnunum, og jákvæður x<sup>2</sup>-liður auðveldar ágiskunarregluna.',
+        'Deiling með x krefst x ≠ 0 og breytir jöfnunni í brotajöfnu. Það gerir hana flóknari.',
+        'Núllþáttareglan á aðeins við þegar margfeldið er 0, ekki −3.',
+        'Margfalda þarf alla liði beggja hliða með −1. Annars breytast lausnirnar.']},
+   {legend:'Hverjar eru þá lausnirnar?',options:['x = −3 eða x = 1','x = 3 eða x = −1','Aðeins x = −3','Aðeins x = 1'],correct:0,
+    fb:['Rétt. x<sup>2</sup> + 2x − 3 = (x + 3)(x − 1) = 0 ⇒ x = −3 eða x = 1.',
+        'Athugaðu formerkin: (x + 3) = 0 gefur x = −3.',
+        'Annars stigs jafna getur haft tvær lausnir. Hvað gefur hinn þátturinn?',
+        'Annars stigs jafna getur haft tvær lausnir. Hvað gefur hinn þátturinn?']}],
+  hint:'Í x<sup>2</sup> + 2x − 3 leitarðu að tveimur tölum með margfeldi −3 og summu 2.',
+  solution:'−x<sup>2</sup> − 2x + 3 = 0 ⇒ x<sup>2</sup> + 2x − 3 = 0 ⇒ (x + 3)(x − 1) = 0 ⇒ x = −3 eða x = 1.'}
+]}
+];
+for(const t of TASKS)for(const p of t.parts)if(p.kind==='asn')for(const g of p.groups){g.options=ASN;g.row=true;}
+const PRACTICE_DAYS=[
+ ['tue','Þriðjudagur 3. nóvember','Kafli 5.1',12],
+ ['wed','Miðvikudagur 4. nóvember','Kaflar 5.2 og 5.3',12],
+ ['thu','Fimmtudagur 5. nóvember','Kaflar 3.3 og 7.1',12],
+ ['fri','Föstudagur 6. nóvember','Kafli 7.1',12]
+];
+const CORE_PER_DAY=7;
+
+/* ===================== Vistun ===================== */
+const KEY='staer2af05.vika3.vefbok.v1',REV='2AF-V03-VB-v1.1-20261104',SCHEMA=1;
+const LEGACY_KEY='staer2af05.vika3.practice.v1';
+const el=id=>document.getElementById(id);
+let storageOK=true,lastSaved=null,saveError=false,legacy=null;
+function fresh(){return {schema:SCHEMA,rev:REV,created:new Date().toISOString(),tasks:{},practice:{}};}
+let state=fresh();
+(function load(){
+ let raw=null;
+ try{raw=localStorage.getItem(KEY);localStorage.setItem(KEY+'.test','1');localStorage.removeItem(KEY+'.test');}catch{storageOK=false;return;}
+ if(raw){
+  try{const p=JSON.parse(raw);if(!p||p.schema!==SCHEMA||!p.tasks||typeof p.tasks!=='object'||Array.isArray(p.tasks))throw 0;
+   p.practice=p.practice&&typeof p.practice==='object'&&!Array.isArray(p.practice)?p.practice:{};state=p;}
+  catch{try{localStorage.setItem(KEY+'.oskiljanlegt.'+Date.now(),raw);}catch{} state=fresh();}
+ }
+ // Eldri vinnuútgáfa (31. okt.) – lesin, aldrei breytt eða eytt.
+ try{const lr=localStorage.getItem(LEGACY_KEY);if(lr){const l=JSON.parse(lr);
+  if(l&&l.version===1&&Array.isArray(l.counts)&&l.counts.length===4&&l.counts.every(n=>Number.isInteger(n)&&n>=0)){
+   legacy=l.counts.slice();
+   if(!state.legacyImported){PRACTICE_DAYS.forEach((d,i)=>{if(!Number.isInteger(state.practice[d[0]])&&legacy[i]>0)state.practice[d[0]]=Math.min(legacy[i],d[3]);});state.legacyImported=new Date().toISOString();}
+  }}}catch{}
+})();
+function part(tid,pid){const t=state.tasks[tid] ||= {parts:{}};return t.parts[pid] ||= {sel:{},attempts:[],hint:false,solution:false};}
+function save(){if(!storageOK){showSave();return;}try{state.rev=REV;localStorage.setItem(KEY,JSON.stringify(state));lastSaved=new Date();saveError=false;}catch{saveError=true;}showSave();}
+function showSave(){const e=el('save-status');
+ if(!storageOK){e.className='save bad';e.textContent='Vistun er ekki tiltæk í þessum vafra. Vinnan glatast ef síðunni er lokað. Vistaðu vinnuskrána sem PDF áður en þú hættir.';return;}
+ if(saveError){e.className='save bad';e.textContent='Síðasta vistun mistókst. Reynt verður aftur við næstu breytingu. Prentaðu vinnuskrá til öryggis.';return;}
+ e.className='save';e.textContent=lastSaved?`Vistað sjálfkrafa kl. ${String(lastSaved.getHours()).padStart(2,'0')}:${String(lastSaved.getMinutes()).padStart(2,'0')}.`:'Vinnan vistast sjálfkrafa í þessum vafra.';}
+
+/* ===================== Innsláttur í eyðu ===================== */
+function parseNum(str){
+ let s=String(str).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'.');
+ if(s.startsWith('(')&&s.endsWith(')'))s=s.slice(1,-1);
+ if(s==='')return null;
+ if(/^-?\d+(\.\d+)?$/.test(s))return Number(s);
+ const m=s.match(/^(-?\d+)\/(-?\d+)$/);if(m&&Number(m[2])!==0)return Number(m[1])/Number(m[2]);
+ return NaN;
+}
+const near=(a,b)=>Math.abs(a-b)<1e-9;
+
+/* ===================== Birting ===================== */
+function optionsHTML(t,p,g,gi){
+ const pid=`${t.id}-${p.id}`;const letters=!g.row;
+ return `<fieldset class="choices ${g.row?'row-opts':''}"><legend>${p.kind==='asn'?String.fromCharCode(97+gi)+') ':''}${g.legend}</legend><div class="opts">${g.options.map((o,oi)=>`<label class="option"><input type="radio" name="${pid}-g${gi}" value="${oi}" data-t="${t.id}" data-p="${p.id}" data-g="${gi}"><span>${letters?String.fromCharCode(65+oi)+'. ':''}${o}</span></label>`).join('')}</div></fieldset>`;
+}
+function renderTasks(){
+ let html='';
+ TASKS.forEach((t,ti)=>{
+  html+=`<section class="card" id="${t.id}" aria-labelledby="${t.id}-title"><span class="day">${t.day}</span><h2 id="${t.id}-title">Verkefni ${ti+1} – ${t.title}</h2>`;
+  for(const p of t.parts){
+   const pid=`${t.id}-${p.id}`;
+   html+=`<div class="part" id="${pid}"><p class="part-label">${t.parts.length>1?'Liður '+p.id+' · ':''}${p.label}</p><div>${p.intro}</div>`;
+   if(p.kind==='choice'||p.kind==='asn'){p.groups.forEach((g,gi)=>{html+=optionsHTML(t,p,g,gi);});}
+   else if(p.kind==='match'){
+    const opts=p.pool.map((o,oi)=>`<option value="${oi}">${o}</option>`).join('');
+    html+=`<div role="group" aria-label="Pörun">${p.rows.map((r,ri)=>`<div class="match-row"><span class="lhs" id="${pid}-r${ri}-l">${r.lhs}</span><select id="${pid}-r${ri}" aria-labelledby="${pid}-r${ri}-l" data-t="${t.id}" data-p="${p.id}" data-g="${ri}"><option value="">Veldu…</option>${opts}</select></div>`).join('')}</div>`;
+   }else if(p.kind==='fill'){
+    html+=`<div class="fill"><label for="${pid}-in">${p.inputLabel}:</label><input id="${pid}-in" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${p.placeholder}" data-t="${t.id}" data-p="${p.id}" data-g="0"></div><p class="muted">Brot má skrifa með skástriki, t.d. 2/3. Tugabrot með kommu, t.d. 0,5.</p>`;
+   }
+   html+=`<div class="actions"><button type="button" data-action="attempt" data-t="${t.id}" data-p="${p.id}">Skrá svar</button><button type="button" class="secondary" data-action="hint" data-t="${t.id}" data-p="${p.id}" aria-expanded="false" aria-controls="${pid}-hint">Vísbending</button><button type="button" class="secondary" data-action="solution" data-t="${t.id}" data-p="${p.id}" aria-expanded="false" aria-controls="${pid}-solution">Bera saman við lausn</button></div>
+   <p class="status" id="${pid}-status"></p><div class="feedback" id="${pid}-feedback" role="status" aria-live="polite"></div>
+   <div class="hint" id="${pid}-hint" hidden><strong>Vísbending.</strong> ${p.hint}</div>
+   <div class="solution" id="${pid}-solution" hidden><strong>Lausn til samanburðar.</strong><p>${p.solution}</p></div></div>`;
+  }
+  html+='</section>';
+ });
+ el('tasks').innerHTML=html;
+ el('toc').innerHTML=TASKS.map((t,i)=>`<a href="#${t.id}" id="toc-${t.id}"><span class="mark" aria-hidden="true">○</span> Verkefni ${i+1}<span class="sr-only" id="toc-${t.id}-sr">, ekki hafið</span></a>`).join('')+'<a href="#skil" id="toc-skil" hidden>Skiladæmi</a>';
+}
+function restoreInputs(){
+ for(const t of TASKS)for(const p of t.parts){const s=part(t.id,p.id);
+  for(const[g,v]of Object.entries(s.sel)){
+   if(p.kind==='match'){const se=el(`${t.id}-${p.id}-r${g}`);if(se&&v!=='')se.value=String(v);}
+   else if(p.kind==='fill'){const i=el(`${t.id}-${p.id}-in`);if(i)i.value=String(v);}
+   else{const r=document.querySelector(`input[name="${t.id}-${p.id}-g${g}"][value="${v}"]`);if(r)r.checked=true;}}}
+}
+function feedback(tid,pid,kind,verdict,html){const f=el(`${tid}-${pid}-feedback`);f.className='feedback '+kind;f.innerHTML=`<span class="verdict">${verdict}</span>${html||''}`;}
+const tried=(tid,pid)=>part(tid,pid).attempts.length>0;
+const taskDone=t=>t.parts.every(p=>tried(t.id,p.id));
+function render(){
+ let done=0;
+ for(const t of TASKS){
+  for(const p of t.parts){const s=part(t.id,p.id),pid=`${t.id}-${p.id}`;
+   for(const a of ['hint','solution']){el(`${pid}-${a}`).hidden=!s[a];document.querySelector(`[data-action="${a}"][data-t="${t.id}"][data-p="${p.id}"]`).setAttribute('aria-expanded',String(!!s[a]));}
+   const n=s.attempts.length;
+   el(`${pid}-status`).textContent=n?`${n} skráð${n===1?'':'ar'} tilraun${n===1?'':'ir'}. Fyrsta tilraun ${s.attempts[0].help?'eftir að hjálp var opnuð':'án hjálpar'}${s.attempts[0].correct?' og rétt.':'.'}`:'Engin skráð tilraun enn.';
+  }
+  const d=taskDone(t),started=t.parts.some(p=>tried(t.id,p.id));if(d)done++;
+  document.querySelector(`#toc-${t.id} .mark`).textContent=d?'✓':started?'◐':'○';el(`toc-${t.id}-sr`).textContent=d?', lokið':started?', hafið':', ekki hafið';
+ }
+ el('count').textContent=`${done} af ${TASKS.length} verkefnum með skráðri tilraun í öllum liðum.`;el('bar').style.width=done/TASKS.length*100+'%';
+ const all=done===TASKS.length;el('skil-gate').hidden=all;el('skil').hidden=!all;el('toc-skil').hidden=!all;
+ el('overview-body').innerHTML=TASKS.map((t,i)=>{const n=t.parts.length,a=t.parts.filter(p=>tried(t.id,p.id)).length,f=t.parts.filter(p=>{const x=part(t.id,p.id).attempts[0];return x&&x.correct&&!x.help;}).length;
+  return `<tr><th scope="row">${i+1}. ${t.title}</th><td>${a} af ${n}</td><td>${f} af ${n}</td></tr>`;}).join('');
+ showSave();
+}
+
+/* ===================== Mat ===================== */
+function grade(t,p){
+ const s=part(t.id,p.id);
+ if(p.kind==='fill'){
+  const raw=s.sel[0]??'';const v=parseNum(raw);
+  if(v===null)return {error:'Skrifaðu svar í eyðuna áður en þú skráir.',focus:el(`${t.id}-${p.id}-in`)};
+  if(Number.isNaN(v))return {error:'Svarið þarf að vera tala eða brot, t.d. 3, −2, 2/3 eða 0,5.',focus:el(`${t.id}-${p.id}-in`)};
+  const ok=p.accept.some(a=>near(a,v));
+  const w=p.wrong.find(x=>near(x.v,v));
+  return {correct:ok,html:`<p>${ok?'✓ Rétt.':'✗ '+(w?w.msg:p.generic)}</p>`,answer:JSON.stringify({0:String(raw)})};
+ }
+ const n=p.kind==='match'?p.rows.length:p.groups.length;
+ for(let g=0;g<n;g++)if(!(g in s.sel)||s.sel[g]===''){const focus=p.kind==='match'?el(`${t.id}-${p.id}-r${g}`):document.querySelector(`input[name="${t.id}-${p.id}-g${g}"]`);return {error:'Svaraðu öllum liðum áður en þú skráir.',focus};}
+ let correct=true,html='';
+ if(p.kind==='match'){p.rows.forEach((r,ri)=>{const v=Number(s.sel[ri]),ok=v===r.correct;if(!ok)correct=false;
+   html+=`<p>${ok?'✓':'✗'} <strong>${r.lhs}</strong>: ${ok?'Rétt.':(r.fb[v]||p.generic)}</p>`;});}
+ else{p.groups.forEach((g,gi)=>{const v=Number(s.sel[gi]),ok=v===g.correct;if(!ok)correct=false;
+   html+=`<p>${ok?'✓':'✗'} ${n>1?`<strong>${p.kind==='asn'?String.fromCharCode(97+gi)+') ':''}${g.legend}</strong> `:''}${p.kind==='asn'?`<em>${g.options[v]}</em> – `:''}${g.fb[v]}</p>`;});}
+ return {correct,html,answer:JSON.stringify(s.sel)};
+}
+
+/* ===================== Atburðir ===================== */
+document.addEventListener('change',e=>{const r=e.target;
+ if(r.matches('input[type=radio][data-t]')){part(r.dataset.t,r.dataset.p).sel[r.dataset.g]=Number(r.value);save();}
+ if(r.matches('select[data-t]')){part(r.dataset.t,r.dataset.p).sel[r.dataset.g]=r.value===''?'':Number(r.value);save();}});
+document.addEventListener('input',e=>{const r=e.target;if(r.matches('input[type=text][data-t]')){part(r.dataset.t,r.dataset.p).sel[0]=r.value.slice(0,40);save();}});
+document.addEventListener('keydown',e=>{const r=e.target;if(e.key==='Enter'&&r.matches('input[type=text][data-t]')){e.preventDefault();document.querySelector(`button[data-action="attempt"][data-t="${r.dataset.t}"][data-p="${r.dataset.p}"]`).click();}});
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button[data-action]');if(!b)return;
+ const t=TASKS.find(x=>x.id===b.dataset.t),p=t.parts.find(x=>x.id===b.dataset.p),s=part(t.id,p.id),act=b.dataset.action;
+ if(act==='hint'){s.hint=true;s.helpUsed=true;}
+ if(act==='solution'){if(!s.attempts.length){feedback(t.id,p.id,'notice','Skráðu fyrst eigið svar.','Lausnin opnast eftir að þú hefur skráð að minnsta kosti eina tilraun.');return;}s.solution=true;s.helpUsed=true;}
+ if(act==='attempt'){const r=grade(t,p);
+  if(r.error){feedback(t.id,p.id,'notice','Ekki skráð.',r.error);if(r.focus)r.focus.focus();return;}
+  s.attempts.push({time:new Date().toISOString(),answer:r.answer,correct:r.correct,help:!!(s.helpUsed||s.attempts.length)});
+  feedback(t.id,p.id,r.correct?'correct':'incorrect',r.correct?'Rétt – tilraunin er skráð.':'Tilraunin er skráð. Lestu endurgjöfina og reyndu aftur.',r.html);}
+ save();render();
+});
+
+/* ===================== Æfingaskráning: einn sleði á dag ===================== */
+const fmtPts=v=>String(Math.round(v*100)/100).replace('.',',');
+const dayMax=d=>d[3];
+const getN=d=>{const n=state.practice[d[0]];return Number.isInteger(n)&&n>=0?Math.min(n,dayMax(d)):0;};
+function note(n,max){
+ if(n===0)return ['','Ekkert dæmi skráð enn. Byrjaðu á fyrsta dæminu í röðinni.'];
+ if(n<CORE_PER_DAY)return ['',`${n} dæmi reynd. Kjarni dagsins er ${CORE_PER_DAY} dæmi; ${CORE_PER_DAY-n} eftir til að ná fullum æfingastigum dagsins.`];
+ if(n===CORE_PER_DAY)return ['done',`${n} dæmi reynd. Ef þau eru öll Kjarnadæmi hefurðu lokið Kjarna dagsins. Æfðu meira er valfrjálst en styrkir færnina.`];
+ if(n<max)return ['extra',`${n} dæmi reynd – vel gert! Þú hefur tekið ${n-CORE_PER_DAY} dæmi umfram Kjarnann. Aukadæmin gefa ekki stig, en þau gera þig öruggari fyrir könnun.`];
+ return ['extra',`Öll ${max} dæmi dagsins reynd. Frábær vinna – þú hefur bæði Kjarna og Æfðu meira.`];
+}
+function practiceStats(){const n=PRACTICE_DAYS.reduce((v,d)=>v+Math.min(getN(d),CORE_PER_DAY),0),total=PRACTICE_DAYS.length*CORE_PER_DAY,all=PRACTICE_DAYS.reduce((v,d)=>v+getN(d),0);return {n,total,all,points:Math.round(n/total*2500)/100};}
+function practiceRender(){
+ for(const d of PRACTICE_DAYS){const n=getN(d),m=dayMax(d),r=el('pr-'+d[0]);r.value=String(n);r.setAttribute('aria-valuetext',`${n} af ${m} dæmum`);el(`pr-${d[0]}-v`).textContent=`${n} af ${m}`;const [cls,txt]=note(n,m);const ne=el(`pr-${d[0]}-note`);ne.className='practice-note '+cls;ne.textContent=txt;}
+ const s=practiceStats();el('practice-result').textContent=`Reynd dæmi alls: ${s.all} · Talin til æfingastiga: ${s.n} af ${s.total} · Áætluð æfingastig: ${fmtPts(s.points)} af 25`;}
+function practiceBuild(){const host=el('practice-days');
+ for(const d of PRACTICE_DAYS){const row=document.createElement('div');row.className='practice-day';
+  row.innerHTML=`<div class="head"><strong>${d[1]}</strong><span class="muted">${d[2]}</span></div>
+  <div class="practice-row"><label class="sr-only" for="pr-${d[0]}">${d[1]}: fjöldi dæma sem þú hefur reynt</label><input type="range" id="pr-${d[0]}" min="0" max="${dayMax(d)}" step="1" data-d="${d[0]}" aria-describedby="pr-${d[0]}-note"><output class="practice-count" id="pr-${d[0]}-v" for="pr-${d[0]}"></output></div>
+  <p class="practice-note" id="pr-${d[0]}-note" aria-live="polite"></p>`;host.append(row);}
+ host.addEventListener('input',e=>{const r=e.target;if(!r.matches('input[type=range][data-d]'))return;const n=Number(r.value);if(!Number.isInteger(n)||n<0||n>Number(r.max))return;state.practice[r.dataset.d]=n;save();practiceRender();});
+ if(legacy&&legacy.some(n=>n>0)){const ln=el('legacy-note');ln.hidden=false;ln.textContent=`Eldri skráning úr fyrri útgáfu fannst (${PRACTICE_DAYS.map((d,i)=>d[1].split(' ')[0]+': '+legacy[i]).join(' · ')}). Hún var notuð sem upphafsgildi þar sem ekkert hafði verið skráð. Athugaðu að fjöldinn sé réttur.`;}
+ practiceRender();}
+
+/* ===================== Vinnuskrá og afrit ===================== */
+function printReport(){const root=el('print-report');root.replaceChildren();const add=(p,tag,txt)=>{const n=document.createElement(tag);n.textContent=txt;p.append(n);return n;};
+ add(root,'h1','STÆR2AF05 · Vika 3 · Vinnuskrá');add(root,'p',new Date().toLocaleString('is-IS')+' · Skráðar tilraunir og hjálparnotkun. Ekki einkunn eða staðfesting á leikni.');
+ const ps=practiceStats();add(root,'h2','Æfingavinna vikunnar – sjálfskráning');
+ for(const d of PRACTICE_DAYS)add(root,'p',`${d[1]} (${d[2]}): ${getN(d)} af ${dayMax(d)} dæmum reynd`);
+ add(root,'p',`Talin til æfingastiga: ${ps.n} af ${ps.total}. Áætluð æfingastig: ${fmtPts(ps.points)} af 25. Bráðabirgðamat; sannreynt í lok spannar.`);
+ const strip=h=>{const d=document.createElement('div');d.innerHTML=String(h).replace(/<sup>(.*?)<\/sup>/g,'^$1').replace(/<span class="frac"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g,'($1)/($2)');return d.textContent.trim();};
+ TASKS.forEach((t,i)=>{const art=add(root,'article','');add(art,'h2',`Verkefni ${i+1} – ${t.title}`);
+  for(const p of t.parts){const s=part(t.id,p.id);add(art,'h3',`Liður ${p.id}: ${s.attempts.length} tilraun(ir) · Vísbending: ${s.hint?'já':'nei'} · Lausn opnuð: ${s.solution?'já':'nei'}`);
+   for(const[name,a]of [['Fyrsta tilraun',s.attempts[0]],['Nýjasta tilraun',s.attempts.length>1?s.attempts.at(-1):null]]){if(!a)continue;let ans=a.answer;
+    try{const o=JSON.parse(a.answer);if(p.kind==='fill')ans='Eyða: '+o[0];else if(p.kind==='match')ans=p.rows.map((r,ri)=>strip(r.lhs)+' → '+strip(p.pool[o[ri]])).join('; ');else ans=p.groups.map((g,gi)=>strip(g.legend)+': '+strip(g.options[o[gi]])).join('; ');}catch{}
+    add(art,'p',`${name}: ${ans} · ${a.correct?'rétt':'ekki rétt'} · ${a.help?'með hjálp/eftir fyrri tilraun':'án hjálpar'}`);}}});
+ if(!storageOK||saveError)add(root,'p','Athugið: vistun var ekki virk. Yfirlitið byggist á opnu vinnueintaki.');
+ window.print();}
+function exportAll(){const a=document.createElement('a');let legacyRaw=null;try{legacyRaw=localStorage.getItem(LEGACY_KEY);}catch{}
+ const url=URL.createObjectURL(new Blob([JSON.stringify({key:KEY,rev:REV,exportedAt:new Date().toISOString(),state,legacy:legacyRaw},null,2)],{type:'application/json'}));a.href=url;a.download='vika3-vinnuskra.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+el('print').addEventListener('click',printReport);el('export').addEventListener('click',exportAll);
+
+/* ===================== Ræsing ===================== */
+el('rev').textContent=REV;
+renderTasks();restoreInputs();practiceBuild();render();
+if(state.legacyImported&&storageOK)save();
+window.__vika3={TASKS,KEY,REV,state:()=>state};
+</script>
+</body>
+</html>
